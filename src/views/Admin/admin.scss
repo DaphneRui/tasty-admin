@@ -1,0 +1,79 @@
+.admin{
+    min-height : 100vh;
+    .aside{
+        min-height : 100vh;
+        &-logo{
+            display : flex;
+            align-items : center;
+            justify-content : center;
+            img{
+                height : 60px;
+            }
+        }
+        &-collapse{
+            position : fixed;
+            bottom : 0;
+            display : flex;
+            align-items : center;
+            justify-content : center;
+            width : 200px;
+            height : 60px;
+            background-color : #B3C0D1;
+            span{
+                display : flex;
+                align-items : center;
+                justify-content : center;
+                height : 60px;
+                font-size : 20px;
+                color : white;
+                background-color : #E9EEF3;               
+                border : 0;
+            }
+            
+        }
+        
+        
+    }
+}
+
+.el-menu-item.is-active {
+    background-color : #177ddc !important;
+}
+
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width : 200px;
+}
+
+.el-header, .el-footer {
+    line-height : 60px;
+    color : #333;
+    text-align : center;
+    background-color : #B3C0D1;
+}
+  
+.el-aside {
+    line-height : 200px;
+    color : #333;
+    text-align : center;
+    background-color : #D3DCE6;
+}
+
+.el-main {
+    color : #333;
+    background-color : #E9EEF3;
+}
+
+body > .el-container {
+    margin-bottom : 40px;
+}
+
+.el-container:nth-child(5) .el-aside,
+.el-container:nth-child(6) .el-aside {
+    line-height : 260px;
+}
+
+.el-container:nth-child(7) .el-aside {
+line-height : 320px;
+}
+

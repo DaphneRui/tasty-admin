@@ -1,12 +1,15 @@
 import actions from './actions';
 import mutations from './mutations';
 
-const tags = {
+const restaurant = {
    state:{
-      tags: []
+      menuList: {
+         list: [],
+         count: 0
+      },
    },
    actions,
    mutations
 };
 
-export default tags;
+export default restaurant;

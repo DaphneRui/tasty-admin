@@ -1,16 +1,12 @@
 <template>
   <div>
-    <Admin />
+    <router-view />
   </div>
 </template>
 
 <script>
-import Admin from './views/Admin/Admin';
 export default {
    name: 'App',
-   components: {
-      Admin
-   }
 };
 </script>
 <style lang="scss" scope>

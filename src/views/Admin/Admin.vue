@@ -23,7 +23,7 @@
         >
           <!-- 导航ul -->
           <el-menu
-            default-active="/admin/restaurant"
+            :default-active="routeActive"
             active-text-color="#fff"
             class="el-menu-vertical-demo"
             :collapse="isCollapse"
@@ -33,23 +33,33 @@
             <el-menu-item
               index="/admin/restaurant"
             >
-              <i class="el-icon-pie-chart"></i>
+              <i class="el-icon-s-shop"></i>
               <span slot="title">餐馆</span>
             </el-menu-item>
             <el-menu-item
               index="/admin/menu"
             >
-              <i class="el-icon-monitor"></i>
+              <i class="el-icon-food"></i>
               <span slot="title">菜单</span>
             </el-menu-item>
             <el-menu-item
+              v-if="isVisitor === false"
               index="/admin/order"
             >
-              <i class="el-icon-monitor"></i>
+              <i class="el-icon-s-order"></i>
               <span slot="title">订单</span>
             </el-menu-item>
           </el-menu>
         </el-main>
+
+        <!-- 登出 -->
+        <el-button
+          class="logout"
+          @click="goLogout"
+        >
+          登出
+        </el-button>
+
         <!-- aside 收缩 -->
         <el-radio-group
           v-model="isCollapse"
@@ -107,6 +117,10 @@
 
 <script>
 import './admin.scss';
+import _ from 'lodash';
+import { getStorage } from '@/common/utils';
+import { mapActions } from 'vuex';
+
 export default {
    name: 'Admin',
    data () {
@@ -117,8 +131,27 @@ export default {
    computed: {
       routeName () {
          return this.$route.name;
+      },
+      routeActive (){
+         return this.$route.path;
+      },
+      /* 验证是否为游客 */
+      isVisitor (){
+         if(_.get(getStorage('userInfo'),'role') === 'visitor'){
+            return true;
+         }else{
+            return false;
+         }
       }
    },
+   methods: {
+      ...mapActions([
+         'logout',
+      ]),
+      goLogout (){
+         this.logout();
+      }
+   }
 
 };
 </script>

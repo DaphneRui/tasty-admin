@@ -4,6 +4,7 @@
     <el-table
       :data="list.slice((currentPage-1)*PageSize,currentPage*PageSize)"
       :style="{width: '100%',margin: '16px 0'}"
+      max-height="500"
     >
       <!-- 餐馆 -->
       <el-table-column
@@ -51,6 +52,7 @@
         <template slot-scope="scope">
           <el-button
             type="primary"
+            :disabled="isEmployee === true ? true : false"
             @click="handleEdit(scope.row)"
           >
             操作
@@ -69,6 +71,7 @@
             v-model="scope.row.isClosed"
             :active-value="true"
             :inactive-value="false"
+            :disabled="isEmployee === true ? true : false"
             @change="closeRest(scope.row)"
           ></el-switch>
         </template>
@@ -214,6 +217,8 @@ import { mapActions,mapState } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+import { getStorage } from '@/common/utils';
+
 var timer;
 export default {
    name: 'Restaurant',
@@ -252,8 +257,16 @@ export default {
    computed:{
       ...mapState({
          'list': state => state.restaurant.restList,
-         'tags': state => state.tags.tags,
+         'tags': state => state.restaurant.tags,
       }),
+      /* 判断是否为部门员工 */
+      isEmployee (){
+         if(_.get(getStorage('userInfo'),'role') === 'employee'){
+            return true;
+         }else{
+            return false;
+         }
+      }
    },
    created () {
       this.setRestList();

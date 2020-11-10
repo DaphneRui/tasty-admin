@@ -6,7 +6,6 @@ export async function restaurant () {
       url:`${host}restaurant/location/-74.0059413,40.7127837`,
       method:'get'
    });
-   console.log('restaurant==>',result);
    return result;
 }
 
@@ -15,6 +14,15 @@ export async function changeRestaurant (data) {
       url:`${host}restaurant`,
       method:'post',
       data
+   });
+   return result;
+}
+
+/* tags */
+export async function tags () {
+   const result = await request({
+      url:`${host}tags`,
+      method:'get'
    });
    return result;
 }

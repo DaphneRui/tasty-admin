@@ -4,6 +4,8 @@ import mutations from './mutations';
 const restaurant = {
    state:{
       restList: [],
+      restName: [],
+      tags: []
    },
    actions,
    mutations

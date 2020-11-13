@@ -4,9 +4,10 @@
       :title="title[`${lang}`]"
       :visible.sync="dialogFormVisible"
       :style="{width: '1450px'}"
+      :before-close="closeDialog"
     >
       <el-form
-        :model="restForm"
+        :model="form"
       >
         <!-- 餐馆名称 -->
         <el-form-item
@@ -127,7 +128,6 @@ import moment from 'moment-timezone';
 moment.locale('zh-cn');
 import { v4 as uuidv4 } from 'uuid';
 import { mapActions } from 'vuex';
-
 var timer;
 export default {
    name: 'Dialog',
@@ -136,7 +136,7 @@ export default {
          type:Object,
          required:true
       },
-      dialogFormVisible:{
+      visable:{
          type:Boolean,
          required:true
       },
@@ -149,6 +149,7 @@ export default {
       return {
          /* 操作框数据 */
          formLabelWidth: '120px',
+         form:{},
          title: '',
          name: '',
          lang: 'zh-CN',
@@ -164,57 +165,55 @@ export default {
          newYorkWeek: '',
          /* 营业时间 */
          bankingHour: [],
-         newHour: []
-
+         newHour: [],
+         /* 显示隐藏 */
+         dialogFormVisible: false,
       };
+   },
+   watch: {
+      visable (v){
+         this.dialogFormVisible = v;
+         this.form = this.$props.restForm;
+         /* 操作框数据 */
+         this.title = _.cloneDeep(this.form.name);
+         this.name = _.cloneDeep(this.form.name);
+         this.rendertags = this.form.tags;
+         /* 营业时间 */
+         this.getBankingHours(this.form.hours);
+      }
    },
    created () {
       /* 纽约时间 */
-      this.getNewYorkTime();
-      timer = setInterval(this.getNewYorkTime(),1000);
-      /* 操作框数据 */
-      this.title = JSON.parse(JSON.stringify(this.$props.restForm.name));
-      this.name = JSON.parse(JSON.stringify(this.$props.restForm.name));
-      this.rendertags = this.$props.restForm.tags;
-      /* 营业时间 */
-      this.getBankingHours(this.$props.restForm.hours);
-   },
-
-   beforeDestroy () {
-      clearInterval(timer);
-   },
-
-   methods: {
-      ...mapActions([
-         'changeRestList',
-      ]),
-
-      /* 切换中英文 */
-      changeLang (val){
-         this.lang = val;
-      },
-
-      /* 增加标签 */
-      addTags (val){
-         if(!_.includes(this.$props.restForm.tags, val)){
-            this.$props.restForm.tags.push(val);
-         }
-      },
-
-      /* 删除标签 */
-      removeTags (tag) {
-         this.$props.restForm.tags.splice(this.$props.restForm.tags.indexOf(tag), 1);
-      },
-
-      /* 纽约时间 */
-      getNewYorkTime (){
+      timer = setInterval(() =>{
          const date = new Date();
          /* 日期 */
          this.newYorkTime = moment.tz(date, 'America/New_York').format('YYYY-MM-DD HH:mm:ss');
          /* 星期几 */
          this.newYorkWeek = moment.tz(date, 'America/New_York').format('dddd');
-      },
+      }, 1000);
 
+   },
+   beforeDestroy () {
+      clearInterval(timer);
+   },
+   methods: {
+      ...mapActions([
+         'changeRestList',
+      ]),
+      /* 切换中英文 */
+      changeLang (val){
+         this.lang = val;
+      },
+      /* 增加标签 */
+      addTags (val){
+         if(!_.includes(this.form.tags, val)){
+            this.form.tags.push(val);
+         }
+      },
+      /* 删除标签 */
+      removeTags (tag) {
+         this.form.tags.splice(this.form.tags.indexOf(tag), 1);
+      },
       /* 营业时间 */
       getBankingHours (bankingHours){
          /* 星期 */
@@ -227,51 +226,41 @@ export default {
             { week:'星期六',id:uuidv4() },
             { week:'星期天',id:uuidv4() }
          ];
-
          this.bankingHour = _.map(bankingWeek,(v,index)=>{
             /* 开始时间 */
             const startTime = _.get(bankingHours[index], 'start');
             /* 结束时间 */
             const endTime = _.get(bankingHours[index], 'end');
-
             v.time = [ moment().startOf('day').add(startTime,'minutes').toDate(), moment().startOf('day').add(endTime,'minutes').toDate() ];
-
             return v;
          });
-
       },
-
       /* 改变营业时间 */
       changeBankingHour (val){
-         this.newHours = _.map(this.restForm.hours,(v)=>{
+         this.newHours = _.map(this.form.hours,(v)=>{
             /* 开始时间 */
             const startTime = val[0].getHours() * 60 + val[0].getMinutes();
-            v.start = _.get(this.restForm,'hours[index].start',startTime );
+            v.start = _.get(this.form,'hours[index].start',startTime );
             /* 结束时间 */
             const endTime = val[1].getHours() * 60 + val[1].getMinutes();
-            v.end = _.get(this.restForm,'hours[index].end',endTime );
+            v.end = _.get(this.form,'hours[index].end',endTime );
             return v;
          });
-
       },
-
       /* 关闭Dialog */
       closeDialog (){
          this.$emit('closeDialog', false);
       },
-
       /* 保存修改 */
       saveChanges (){
          const data = {
             name: this.name,
-            tags: this.restForm.tags,
+            tags: this.form.tags,
             hours: this.newHours
          };
-         this.changeRestList({ id: this.restForm._id, msg: data });
+         this.changeRestList({ id: this.form._id, msg: data });
          this.closeDialog();
       }
-
    },
-
 };
 </script>

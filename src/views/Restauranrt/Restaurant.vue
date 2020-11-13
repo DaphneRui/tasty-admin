@@ -91,21 +91,19 @@
     </el-pagination>
 
     <!-- 操作框 -->
-    <div v-if="dialogFormVisible === true">
-      <Dialog
-        :rest-form="restForm"
-        :tags="tags"
-        :dialog-form-visible="dialogFormVisible"
-        @closeDialog="toggleModel"
-      />
-    </div>
+    <Dialog
+      :rest-form="restForm"
+      :tags="tags"
+      :visable="dialogFormVisible"
+      @closeDialog="toggleModel"
+    />
   </div>
 </template>
 
 <script>
 import './restaurant.scss';
 import { mapActions,mapState } from 'vuex';
-
+import _ from 'lodash';
 import Dialog from '@/components/Dialog/Dialog';
 
 export default {
@@ -124,7 +122,7 @@ export default {
          currentPage:1,
          // 默认每页显示的条数（可修改）
          PageSize:10,
-
+         restForm:{}
       };
    },
    computed:{
@@ -155,9 +153,11 @@ export default {
       },
       /* 操作按钮 */
       handleEdit (row) {
-         this.toggleModel(true);
+
          /* 深拷贝当前编辑项，不影响原数据 */
-         this.restForm = JSON.parse(JSON.stringify(row));
+         this.restForm = _.cloneDeep(row);
+         this.toggleModel(true);
+
       },
 
       /* 手动关闭 */

@@ -71,7 +71,7 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.available"
-            :disabled="isEmployee === true ? true : false"
+            :disabled="$permission()"
             @change="changeAvailable(scope.row)"
           >
           </el-switch>
@@ -101,7 +101,6 @@ import './menu.scss';
 import { mapState,mapActions } from 'vuex';
 import pinyin from 'pinyin-match';
 import { setStorage,getStorage } from '@/common/utils';
-import _ from 'lodash';
 
 export default {
    name: 'Menu',
@@ -133,14 +132,6 @@ export default {
       restNameCopy () {
          return this.restName;
       },
-      /* 判断是否为部门员工 */
-      isEmployee (){
-         if(_.get(getStorage('userInfo'),'role') === 'employee'){
-            return true;
-         }else{
-            return false;
-         }
-      }
    },
    created () {
       this.getRestName();
@@ -171,6 +162,7 @@ export default {
          } else {
             this.matchName = this.restName; //未输入返回原数组
          }
+
       },
 
       /* 请求菜品数据 */
@@ -198,6 +190,7 @@ export default {
       /* 获取对应菜品 */
       getFood (val){
          const id = val;
+         this.currentPage = 1;
          setStorage('restaurantId',id);
          this.requestData();
          /* 获取Dom,清空input */
@@ -232,9 +225,10 @@ export default {
       },
 
       /* foodName模糊搜索 */
-      foodFilter () {
+      foodFilter (e) {
+         this.keyword = e.target.value;
+         this.currentPage = 1;
          this.requestData();
-         this.keyword = '';
       },
    },
 

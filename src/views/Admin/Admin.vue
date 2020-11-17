@@ -94,11 +94,11 @@
           <el-breadcrumb
             separator="/"
           >
-            <el-breadcrumb-item>
-              Admin
-            </el-breadcrumb-item>
-            <el-breadcrumb-item>
-              <span>{{ routeName }}</span>
+            <el-breadcrumb-item
+              v-for="(item,index) in routeName"
+              :key="index"
+            >
+              <span>{{ item }}</span>
             </el-breadcrumb-item>
           </el-breadcrumb>
 
@@ -130,7 +130,7 @@ export default {
    },
    computed: {
       routeName () {
-         return this.$route.name;
+         return this.$route.path.split('/').slice(1);
       },
       routeActive (){
          return this.$route.path;
